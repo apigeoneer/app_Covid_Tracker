@@ -25,7 +25,9 @@ class MainActivity : AppCompatActivity() {
         /**
          * Use Retrofit (w/ Gson Converter)
          */
-        val gson = GsonBuilder().create()
+        // We need to add the setDateFormat() method to state the date format in which
+        // it will have to interpret the API Date data
+        val gson = GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create()
         val retrofit = Retrofit.Builder()
                 .baseUrl(BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create(gson))
@@ -52,7 +54,7 @@ class MainActivity : AppCompatActivity() {
                 // To call the older data first (for grafting purposes), we use reversed(
                 nationalDailyData = nationalData.reversed()
                 Log.i(TAG, "Update graph w/ national data")
-                // TODO: Update graph w/ national data
+                updateDisplayWithData(nationalDailyData)
             }
         })
 
@@ -80,6 +82,11 @@ class MainActivity : AppCompatActivity() {
                 // TODO: Update graph w/ state data
             }
         })
+    }
 
+    private fun updateDisplayWithData(dailyData: List<CovidData>) {
+        // Create a new SparkAdapter w/ the data
+        // Update radio buttons to select 'Positive' cases & 'All Time' by default
+        // Display metric for the most  recent data
     }
 }
