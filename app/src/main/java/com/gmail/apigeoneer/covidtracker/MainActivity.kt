@@ -16,6 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class MainActivity : AppCompatActivity() {
 
     private lateinit var nationalDailyData: List<CovidData>
+    private lateinit var perStateDailyData: Map<String, List<CovidData>>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -45,7 +46,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "onResponse $response")
                 val nationalData = response.body()
                 if (nationalData == null) {
-                    Log.w(TAG, "Didn't receive a valid response body for National data.")
+                    Log.w(TAG, "Didn't receive a valid response body for the National data.")
                     return
                 }
                 // To call the older data first (for grafting purposes), we use reversed(
@@ -65,14 +66,17 @@ class MainActivity : AppCompatActivity() {
 
             override fun onResponse(call: Call<List<CovidData>>, response: Response<List<CovidData>>) {
                 Log.i(TAG, "onResponse $response")
-                val nationalData = response.body()
-                if (nationalData == null) {
-                    Log.w(TAG, "Didn't receive a valid response body for State data.")
+                val statesData = response.body()
+                if (statesData == null) {
+                    Log.w(TAG, "Didn't receive a valid response body for the State data.")
                     return
                 }
                 // To call the older data first (for grafting purposes), we use reversed(
-                nationalDailyData = nationalData.reversed()
-                Log.i(TAG, "Update graph w/ state data")
+                // We need to create mapping of each state & its Covid data,
+                // since the json data contains an array of State objects,
+                // one object for each state w/ data for all dates
+                perStateDailyData = statesData.reversed().groupBy { it.state }
+                Log.i(TAG, "Update spinner w/ state names")
                 // TODO: Update graph w/ state data
             }
         })
