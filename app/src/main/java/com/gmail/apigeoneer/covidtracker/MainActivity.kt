@@ -21,6 +21,7 @@ private const val BASE_URL = "https://api.covidtracking.com/v1/"
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var adapter: CovidSparkAdapter
     private lateinit var sparkView: SparkView
     private lateinit var rbAllTime: RadioButton
     private lateinit var rbPositive: RadioButton
@@ -103,7 +104,7 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
         // Create a new SparkAdapter w/ the data
-        val adapter = CovidSparkAdapter(dailyData)
+        adapter = CovidSparkAdapter(dailyData)
         sparkView.adapter = adapter
         // Update radio buttons to select 'Positive' cases & 'All Time' by default
         rbPositive.isChecked = true
