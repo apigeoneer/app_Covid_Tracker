@@ -3,24 +3,41 @@ package com.gmail.apigeoneer.covidtracker
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.RadioButton
+import android.widget.TextView
 import com.google.gson.GsonBuilder
+import com.robinhood.spark.SparkView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.NumberFormat
+import java.text.SimpleDateFormat
+import java.util.*
 
-    private const val BASE_URL = "https://api.covidtracking.com/v1/"
+private const val BASE_URL = "https://api.covidtracking.com/v1/"
     private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var nationalDailyData: List<CovidData>
+    private lateinit var sparkView: SparkView
+    private lateinit var rbAllTime: RadioButton
+    private lateinit var rbPositive: RadioButton
+    private lateinit var tvDateLabel: TextView
+    private lateinit var tvMetricLabel: TextView
     private lateinit var perStateDailyData: Map<String, List<CovidData>>
+    private lateinit var nationalDailyData: List<CovidData>
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        sparkView = findViewById(R.id.spark_view)
+        rbAllTime = findViewById(R.id.all_time_rb)
+        rbPositive = findViewById(R.id.positive_rb)
+        tvMetricLabel = findViewById(R.id.metric_label_tv)
+        tvDateLabel = findViewById(R.id.date_label_tv)
 
         /**
          * Use Retrofit (w/ Gson Converter)
@@ -86,7 +103,20 @@ class MainActivity : AppCompatActivity() {
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
         // Create a new SparkAdapter w/ the data
+        val adapter = CovidSparkAdapter(dailyData)
+        sparkView.adapter = adapter
         // Update radio buttons to select 'Positive' cases & 'All Time' by default
+        rbPositive.isChecked = true
+        rbAllTime.isChecked = true
         // Display metric for the most  recent data
+        updateInfoDate(dailyData.last())
+    }
+
+    private fun updateInfoDate(covidData: CovidData) {
+        // Formatting the no. to include commas & decimals at proper places
+        tvMetricLabel.text = NumberFormat.getInstance().format(covidData.positiveIncrease)
+        // Formatting the date to a more readable form
+        val outputDateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
+        tvDateLabel.text = outputDateFormat.format(covidData.dateChecked)
     }
 }
