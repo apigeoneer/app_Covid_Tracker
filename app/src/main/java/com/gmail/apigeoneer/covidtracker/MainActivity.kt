@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                 Log.i(TAG, "onResponse $response")
                 val nationalData = response.body()
                 if (nationalData == null) {
-                    Log.w(TAG, "Didn't receive a valid response body.")
+                    Log.w(TAG, "Didn't receive a valid response body for National data.")
                     return
                 }
                 // To call the older data first (for grafting purposes), we use reversed(
@@ -58,7 +58,24 @@ class MainActivity : AppCompatActivity() {
         /**
          * Fetch the State data
          */
+        covidService.getStateData().enqueue(object: Callback<List<CovidData>> {
+            override fun onFailure(call: Call<List<CovidData>>, t: Throwable) {
+                Log.e(TAG, "onFailure $t")
+            }
 
+            override fun onResponse(call: Call<List<CovidData>>, response: Response<List<CovidData>>) {
+                Log.i(TAG, "onResponse $response")
+                val nationalData = response.body()
+                if (nationalData == null) {
+                    Log.w(TAG, "Didn't receive a valid response body for State data.")
+                    return
+                }
+                // To call the older data first (for grafting purposes), we use reversed(
+                nationalDailyData = nationalData.reversed()
+                Log.i(TAG, "Update graph w/ state data")
+                // TODO: Update graph w/ state data
+            }
+        })
 
     }
 }
