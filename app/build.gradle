@@ -29,6 +29,10 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    repositories {
+        maven { url "https://jitpack.io" }
+    }
 }
 
 dependencies {
@@ -44,5 +48,7 @@ dependencies {
 
     implementation 'com.squareup.retrofit2:retrofit:2.9.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'  //ScalarConverter
-    implementation 'com.robinhood.spark:spark:1.2.0'    // Spark, for graphing
+    implementation 'com.robinhood.spark:spark:1.2.0'    // Robinhood Spark (for line graph)
+    implementation 'com.github.arcadefire:nice-spinner:1.4.4'    // Nice-Spinner
+    implementation 'com.robinhood.ticker:ticker:2.0.2'    // Robinhood Ticker (for animating #cases)
 }
