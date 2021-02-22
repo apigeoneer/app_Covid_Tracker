@@ -6,6 +6,8 @@ import android.util.Log
 import android.widget.RadioButton
 import android.widget.RadioGroup
 import android.widget.TextView
+import androidx.annotation.ColorInt
+import androidx.core.content.ContextCompat
 import com.google.gson.GsonBuilder
 import com.robinhood.spark.SparkView
 import retrofit2.Call
@@ -22,6 +24,7 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var currentlyShownData: List<CovidData>
     private lateinit var rgMetricSelection: RadioGroup
     private lateinit var rgTimeSelection: RadioGroup
     private lateinit var adapter: CovidSparkAdapter
@@ -119,7 +122,7 @@ class MainActivity : AppCompatActivity() {
         sparkView.isScrubEnabled = true
         sparkView.setScrubListener { itemData ->
             if(itemData is CovidData) {
-                updateInfoDate(itemData)
+                updateInfoForDate(itemData)
             }
         }
 
@@ -144,11 +147,27 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateDisplayMetric(metric: Metric) {
+        // Update the color of the chart
+        val colorRes = when (metric) {
+            Metric.NEGATIVE -> R.color.negative
+            Metric.POSITIVE -> R.color.positive
+            Metric.DEATH -> R.color.death
+        }
+        // Adding annotation to make it obv that the variable stores a color
+        @ColorInt val colorInt = ContextCompat.getColor(this, colorRes)
+        sparkView.lineColor = colorInt
+        tvMetricLabel.setTextColor(colorInt)
+
+        // Update the metric on the adapter
         adapter.metric = metric
         adapter.notifyDataSetChanged()
+
+        // Reset no. & date shown in the bottom text views
+        updateInfoForDate(currentlyShownData.last())
     }
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
+        currentlyShownData = dailyData
         // Create a new SparkAdapter w/ the data
         adapter = CovidSparkAdapter(dailyData)
         sparkView.adapter = adapter
@@ -156,10 +175,10 @@ class MainActivity : AppCompatActivity() {
         rbPositive.isChecked = true
         rbAllTime.isChecked = true
         // Display metric for the most  recent data
-        updateInfoDate(dailyData.last())
+        updateDisplayMetric(Metric.POSITIVE)
     }
 
-    private fun updateInfoDate(covidData: CovidData) {
+    private fun updateInfoForDate(covidData: CovidData) {
         val numCases = when (adapter.metric) {
             Metric.NEGATIVE -> covidData.negativeIncrease
             Metric.POSITIVE -> covidData.positiveIncrease
