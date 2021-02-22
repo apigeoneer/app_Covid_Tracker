@@ -44,19 +44,20 @@
         app:layout_constraintTop_toBottomOf="@+id/states_tv">
 
         <RadioButton
-            android:id="@+id/positive_rb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Positive"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
-
-        <RadioButton
             android:id="@+id/negative_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_margin="5dp"
             android:text="Negative"
+            style="@style/CustomRadioButton"
+            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+
+        <RadioButton
+            android:id="@+id/positive_rb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="5dp"
+            android:text="Positive"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <RadioButton
