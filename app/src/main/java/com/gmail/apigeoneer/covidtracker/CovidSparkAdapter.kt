@@ -1,5 +1,6 @@
 package com.gmail.apigeoneer.covidtracker
 
+import android.graphics.RectF
 import com.robinhood.spark.SparkAdapter
 
 class CovidSparkAdapter(
@@ -24,4 +25,11 @@ class CovidSparkAdapter(
 
     override fun getCount() = dailyData.size
 
+    override fun getDataBounds(): RectF {
+        val bounds = super.getDataBounds()
+        if (daysAgo != TimeScale.ALLTIME) {
+            bounds.left = count - daysAgo.numDays.toFloat()
+        }
+        return bounds
+    }
 }

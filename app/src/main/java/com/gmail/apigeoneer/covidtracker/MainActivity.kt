@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import com.google.gson.GsonBuilder
 import com.robinhood.spark.SparkView
@@ -21,6 +22,8 @@ import java.util.*
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var rgMetricSelection: RadioGroup
+    private lateinit var rgTimeSelection: RadioGroup
     private lateinit var adapter: CovidSparkAdapter
     private lateinit var sparkView: SparkView
     private lateinit var rbAllTime: RadioButton
@@ -34,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        rgMetricSelection = findViewById(R.id.metric_selection_rg)
+        rgTimeSelection = findViewById(R.id.time_selection_rg)
         sparkView = findViewById(R.id.spark_view)
         rbAllTime = findViewById(R.id.all_time_rb)
         rbPositive = findViewById(R.id.positive_rb)
@@ -118,7 +123,29 @@ class MainActivity : AppCompatActivity() {
             }
         }
 
-        // Respond to radio button selected events
+        // Respond to Radio Button selected events (for both the Radio Groups)
+        rgTimeSelection.setOnCheckedChangeListener { _, checkedId ->
+            adapter.daysAgo = when (checkedId) {
+                R.id.week_rb -> TimeScale.WEEK
+                R.id.month_rb -> TimeScale.MONTH
+                else -> TimeScale.ALLTIME
+            }
+            // Notifying the adapter that the underlying data has changed, so that it knows that its has to change itself
+            adapter.notifyDataSetChanged()
+        }
+
+        rgMetricSelection.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.positive_rb -> updateDisplayMetric(Metric.POSITIVE)
+                R.id.negative_rb -> updateDisplayMetric(Metric.NEGATIVE)
+                R.id.death_rb -> updateDisplayMetric(Metric.DEATH)
+            }
+        }
+    }
+
+    private fun updateDisplayMetric(metric: Metric) {
+        adapter.metric = metric
+        adapter.notifyDataSetChanged()
     }
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
