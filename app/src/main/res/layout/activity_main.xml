@@ -37,6 +37,7 @@
         android:id="@+id/metric_selection_rg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginTop="11dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,18 +46,16 @@
 
         <RadioButton
             android:id="@+id/negative_rb"
+            style="@style/CustomRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="Negative"
-            style="@style/CustomRadioButton"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <RadioButton
             android:id="@+id/positive_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="Positive"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -64,7 +63,6 @@
             android:id="@+id/death_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="Death"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </RadioGroup>
@@ -117,7 +115,7 @@
     <TextView
         android:id="@+id/date_label_tv"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:gravity="center"
         android:padding="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -128,7 +126,7 @@
     <com.robinhood.ticker.TickerView
         android:id="@+id/ticker_view"
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
