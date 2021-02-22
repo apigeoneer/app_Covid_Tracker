@@ -19,6 +19,7 @@ class CovidSparkAdapter(
         }
     }
 
+    // RETURNS AN OBJ. in the JSON array at the position - index
     override fun getItem(index: Int) = dailyData[index]
 
     override fun getCount() = dailyData.size

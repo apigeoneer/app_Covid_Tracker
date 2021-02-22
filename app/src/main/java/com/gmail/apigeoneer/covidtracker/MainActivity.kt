@@ -16,7 +16,7 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val BASE_URL = "https://api.covidtracking.com/v1/"
+    private const val BASE_URL = "https://api.covidtracking.com/v1/"
     private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
@@ -69,7 +69,7 @@ class MainActivity : AppCompatActivity() {
                     Log.w(TAG, "Didn't receive a valid response body for the National data.")
                     return
                 }
-                // To call the older data first (for grafting purposes), we use reversed(
+                // WE USE REVERSED(), to call the older data first (for graphing purposes)
                 nationalDailyData = nationalData.reversed()
                 Log.i(TAG, "Update graph w/ national data")
                 updateDisplayWithData(nationalDailyData)
@@ -91,15 +91,34 @@ class MainActivity : AppCompatActivity() {
                     Log.w(TAG, "Didn't receive a valid response body for the State data.")
                     return
                 }
-                // To call the older data first (for grafting purposes), we use reversed(
-                // We need to create mapping of each state & its Covid data,
-                // since the json data contains an array of State objects,
-                // one object for each state w/ data for all dates
+                // We're setting up the event listener here because we only want to
+                // update the text to display the data we actually have a response
+                setupEventListeners()
+                /**
+                 * WE USE REVERSED(), to call the older data first (for graphing purposes)
+                 * We need to create MAPPING of each state w/ its Covid data,
+                 * since the JSON data contains an array of State objects,
+                 * one object for each state, w/ data for all dates.
+                 */
                 perStateDailyData = statesData.reversed().groupBy { it.state }
                 Log.i(TAG, "Update spinner w/ state names")
                 // TODO: Update graph w/ state data
             }
         })
+    }
+
+    private fun setupEventListeners() {
+        /* Here goes all the logic for listening to the event when any of the radio buttons are clicked */
+
+        // Enable scrubbing on the chart & add a scrub Listener
+        sparkView.isScrubEnabled = true
+        sparkView.setScrubListener { itemData ->
+            if(itemData is CovidData) {
+                updateInfoDate(itemData)
+            }
+        }
+
+        // Respond to radio button selected events
     }
 
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
@@ -114,8 +133,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateInfoDate(covidData: CovidData) {
+        val numCases = when (adapter.metric) {
+            Metric.NEGATIVE -> covidData.negativeIncrease
+            Metric.POSITIVE -> covidData.positiveIncrease
+            Metric.DEATH -> covidData.deathIncrease
+        }
         // Formatting the no. to include commas & decimals at proper places
-        tvMetricLabel.text = NumberFormat.getInstance().format(covidData.positiveIncrease)
+        tvMetricLabel.text = NumberFormat.getInstance().format(numCases)
         // Formatting the date to a more readable form
         val outputDateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
         tvDateLabel.text = outputDateFormat.format(covidData.dateChecked)
