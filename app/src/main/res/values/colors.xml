@@ -10,4 +10,6 @@
     <color name="negative">#FF04B804</color>
     <color name="positive">#FFEA6D0C</color>
     <color name="death">#FFD10505</color>
+    <color name="GraphBackground">#ebeef6</color>
+    <color name="selected_background">#3E3E3E</color>
 </resources>

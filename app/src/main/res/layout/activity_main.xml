@@ -37,7 +37,7 @@
         android:id="@+id/metric_selection_rg"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:layout_marginTop="11dp"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
@@ -45,26 +45,24 @@
         app:layout_constraintTop_toBottomOf="@+id/states_tv">
 
         <RadioButton
-            android:id="@+id/positive_rb"
+            android:id="@+id/negative_rb"
+            style="@style/CustomRadioButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Positive"
+            android:text="Negative"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <RadioButton
-            android:id="@+id/negative_rb"
+            android:id="@+id/positive_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
-            android:text="Negative"
+            android:text="Positive"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
         <RadioButton
             android:id="@+id/death_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="Death"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </RadioGroup>
@@ -73,6 +71,8 @@
         android:id="@+id/spark_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:background="@color/GraphBackground"
+        android:paddingTop="8dp"
         app:layout_constraintBottom_toTopOf="@+id/time_selection_rg"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -80,9 +80,9 @@
 
     <RadioGroup
         android:id="@+id/time_selection_rg"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
+        android:background="@color/GraphBackground"
         android:gravity="center"
         android:orientation="horizontal"
         app:layout_constraintBottom_toTopOf="@+id/ticker_view"
@@ -94,7 +94,6 @@
             android:id="@+id/week_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="Week"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -102,7 +101,6 @@
             android:id="@+id/month_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="Month"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
 
@@ -110,7 +108,6 @@
             android:id="@+id/all_time_rb"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_margin="5dp"
             android:text="All Time"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
     </RadioGroup>
@@ -118,7 +115,7 @@
     <TextView
         android:id="@+id/date_label_tv"
         android:layout_width="wrap_content"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:gravity="center"
         android:padding="16dp"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
@@ -129,7 +126,7 @@
     <com.robinhood.ticker.TickerView
         android:id="@+id/ticker_view"
         android:layout_width="0dp"
-        android:layout_height="80dp"
+        android:layout_height="70dp"
         android:gravity="center"
         android:textAppearance="@style/TextAppearance.AppCompat.Large"
         app:layout_constraintBottom_toBottomOf="parent"
