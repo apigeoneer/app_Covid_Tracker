@@ -28,9 +28,7 @@
 
 ## INTRO
 
-**API :**
-
-[**The Covid Tracking Project**](https://covidtracking.com/data/api)
+**API :** [**The Covid Tracking Project**](https://covidtracking.com/data/api)
 
 
 **Libraries :** 
