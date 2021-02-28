@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.RadioButton
+import android.widget.RadioGroup
 import android.widget.TextView
 import com.google.gson.GsonBuilder
 import com.robinhood.spark.SparkView
@@ -16,11 +17,14 @@ import java.text.NumberFormat
 import java.text.SimpleDateFormat
 import java.util.*
 
-private const val BASE_URL = "https://api.covidtracking.com/v1/"
+    private const val BASE_URL = "https://api.covidtracking.com/v1/"
     private const val TAG = "MainActivity"
 
 class MainActivity : AppCompatActivity() {
 
+    private lateinit var rgMetricSelection: RadioGroup
+    private lateinit var rgTimeSelection: RadioGroup
+    private lateinit var adapter: CovidSparkAdapter
     private lateinit var sparkView: SparkView
     private lateinit var rbAllTime: RadioButton
     private lateinit var rbPositive: RadioButton
@@ -33,6 +37,8 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
+        rgMetricSelection = findViewById(R.id.metric_selection_rg)
+        rgTimeSelection = findViewById(R.id.time_selection_rg)
         sparkView = findViewById(R.id.spark_view)
         rbAllTime = findViewById(R.id.all_time_rb)
         rbPositive = findViewById(R.id.positive_rb)
@@ -68,7 +74,7 @@ class MainActivity : AppCompatActivity() {
                     Log.w(TAG, "Didn't receive a valid response body for the National data.")
                     return
                 }
-                // To call the older data first (for grafting purposes), we use reversed(
+                // WE USE REVERSED(), to call the older data first (for graphing purposes)
                 nationalDailyData = nationalData.reversed()
                 Log.i(TAG, "Update graph w/ national data")
                 updateDisplayWithData(nationalDailyData)
@@ -90,10 +96,15 @@ class MainActivity : AppCompatActivity() {
                     Log.w(TAG, "Didn't receive a valid response body for the State data.")
                     return
                 }
-                // To call the older data first (for grafting purposes), we use reversed(
-                // We need to create mapping of each state & its Covid data,
-                // since the json data contains an array of State objects,
-                // one object for each state w/ data for all dates
+                // We're setting up the event listener here because we only want to
+                // update the text to display the data we actually have a response
+                setupEventListeners()
+                /**
+                 * WE USE REVERSED(), to call the older data first (for graphing purposes)
+                 * We need to create MAPPING of each state w/ its Covid data,
+                 * since the JSON data contains an array of State objects,
+                 * one object for each state, w/ data for all dates.
+                 */
                 perStateDailyData = statesData.reversed().groupBy { it.state }
                 Log.i(TAG, "Update spinner w/ state names")
                 // TODO: Update graph w/ state data
@@ -101,9 +112,45 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
+    private fun setupEventListeners() {
+        /* Here goes all the logic for listening to the event when any of the radio buttons are clicked */
+
+        // Enable scrubbing on the chart & add a scrub Listener
+        sparkView.isScrubEnabled = true
+        sparkView.setScrubListener { itemData ->
+            if(itemData is CovidData) {
+                updateInfoDate(itemData)
+            }
+        }
+
+        // Respond to Radio Button selected events (for both the Radio Groups)
+        rgTimeSelection.setOnCheckedChangeListener { _, checkedId ->
+            adapter.daysAgo = when (checkedId) {
+                R.id.week_rb -> TimeScale.WEEK
+                R.id.month_rb -> TimeScale.MONTH
+                else -> TimeScale.ALLTIME
+            }
+            // Notifying the adapter that the underlying data has changed, so that it knows that its has to change itself
+            adapter.notifyDataSetChanged()
+        }
+
+        rgMetricSelection.setOnCheckedChangeListener { _, checkedId ->
+            when (checkedId) {
+                R.id.positive_rb -> updateDisplayMetric(Metric.POSITIVE)
+                R.id.negative_rb -> updateDisplayMetric(Metric.NEGATIVE)
+                R.id.death_rb -> updateDisplayMetric(Metric.DEATH)
+            }
+        }
+    }
+
+    private fun updateDisplayMetric(metric: Metric) {
+        adapter.metric = metric
+        adapter.notifyDataSetChanged()
+    }
+
     private fun updateDisplayWithData(dailyData: List<CovidData>) {
         // Create a new SparkAdapter w/ the data
-        val adapter = CovidSparkAdapter(dailyData)
+        adapter = CovidSparkAdapter(dailyData)
         sparkView.adapter = adapter
         // Update radio buttons to select 'Positive' cases & 'All Time' by default
         rbPositive.isChecked = true
@@ -113,8 +160,13 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun updateInfoDate(covidData: CovidData) {
+        val numCases = when (adapter.metric) {
+            Metric.NEGATIVE -> covidData.negativeIncrease
+            Metric.POSITIVE -> covidData.positiveIncrease
+            Metric.DEATH -> covidData.deathIncrease
+        }
         // Formatting the no. to include commas & decimals at proper places
-        tvMetricLabel.text = NumberFormat.getInstance().format(covidData.positiveIncrease)
+        tvMetricLabel.text = NumberFormat.getInstance().format(numCases)
         // Formatting the date to a more readable form
         val outputDateFormat = SimpleDateFormat("MMM dd, yyyy", Locale.US)
         tvDateLabel.text = outputDateFormat.format(covidData.dateChecked)
